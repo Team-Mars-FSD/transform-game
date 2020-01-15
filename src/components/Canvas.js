@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TriangleShape from './TriangleShape.js';
 import { Triangle } from './triangle.js';
+import { evaluateMatch } from './evaluate.js'
 
 class Canvas extends Component {
   constructor(props) {
@@ -10,7 +11,14 @@ class Canvas extends Component {
       translateY: "",
       moveCounter: 0
     }
-    this.player = new Triangle( -4, 3, -4, 1, -2, 1);
+    this.goal = new Triangle(7, -6, 5, -8, 7, -8);
+    this.player = new Triangle(-4, 3, -4, 1, -2, 1);
+
+    this.playerStyle = {
+      fill: "rgb(204, 130, 238)",
+      stroke: "rgb(104, 56, 126)",
+      strokeWidth: 2
+    }
   }
 
   handleOnChange = event => {
@@ -82,6 +90,11 @@ class Canvas extends Component {
   }
 
   render() {
+
+    let win = "";
+    if (evaluateMatch(this.player, this.goal)) {
+      win = "WIN!"
+    }
     return (
       <>
         <svg width="1000" height="1000">
@@ -95,7 +108,10 @@ class Canvas extends Component {
           <text x="505" y="15">10</text>
           <text x="980" y="515">10</text>
 
-          <TriangleShape a={this.player.a} b={this.player.b} c={this.player.c} />
+          <TriangleShape a={this.goal.a} b={this.goal.b} c={this.goal.c} />
+          <TriangleShape a={this.player.a} b={this.player.b} c={this.player.c} style={this.playerStyle} />
+
+          <text className={win === "WIN!" ? "win" : null} x="300" y="500">{win}</text>
 
         </svg>
         <br />
@@ -104,8 +120,8 @@ class Canvas extends Component {
           x:<input className="input" type="number" onChange={this.handleOnChange} name={"translateX"} value={this.state.translateX} />
           y:<input className="input" type="number" onChange={this.handleOnChange} name={"translateY"} value={this.state.translateY} />
           <button onClick={() => this.handleTranslate()}>Translate</button>
-          <button onClick={() => this.handleRotate(90)}>Rotate 90° ↻</button>
-          <button onClick={() => this.handleRotate(270)}>Rotate 90° ↻</button>
+          <button onClick={() => this.handleRotate(90)}>Rotate 90° ↻ </button>
+          <button onClick={() => this.handleRotate(270)}>Rotate 90° ↻ </button>
           <button onClick={() => this.handleReflect("x")}>Reflect on x-axis</button>
           <button onClick={() => this.handleReflect("y")}>Reflect on y-axis</button>
           <span>Move: {this.state.moveCounter}</span>
