@@ -10,8 +10,9 @@ const TriangleShape = (props) => {
 
   return (
     <>
-        <polygon points={`${cax} ${cay}, ${cbx} ${cby}, ${ccx} ${ccy}`}
-          stroke="black" strokeWidth="3" fill="blue">
+        <polygon className="triangle"
+          points={`${cax} ${cay}, ${cbx} ${cby}, ${ccx} ${ccy}`}
+          style={props.style}>
         </polygon>
 
         {/* point labels */}
