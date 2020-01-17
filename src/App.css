@@ -11,10 +11,16 @@
   width: 45px;
 }
 
-.triangle{
+.goal{
   fill: rgb(211, 211, 211);
   stroke: darkgray;
   stroke-width: 2;
+}
+
+.player{
+  fill: rgb(204, 130, 238);
+  stroke: rgb(104, 56, 126);
+  stroke-width: 2
 }
 
 .win{
@@ -30,3 +36,4 @@
     transform: rotate(359deg);
   }
 }
+
