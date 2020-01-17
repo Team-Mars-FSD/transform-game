@@ -10,7 +10,9 @@ class Canvas extends Component {
     this.state = {
       translateX: "",
       translateY: "",
-      animate: false,
+      rotateDeg: "",
+      reflectAxis: "",
+      animate: null,
       moveCounter: 0
     }
     this.goal = new Triangle(7, -6, 5, -8, 7, -8);
@@ -25,31 +27,48 @@ class Canvas extends Component {
 
   handleTranslate = async () => {
     await this.setState(state => ({
-      animate: !state.animate
+      animate: "translate"
     }));
+
     setTimeout(() => {
       this.player.translate(Number(this.state.translateX), Number(this.state.translateY));
       this.setState(state => ({
-        animate: !state.animate,
+        animate: null,
         moveCounter: state.moveCounter + 1
         //translateX: "", enable later
         //translateY: "",
       }));
-    }, 1000);
+    }, 650);
   };
 
-  handleRotate = (deg) => {
-    this.player.rotate(0, 0, deg);
-    this.setState(state => ({
-      moveCounter: state.moveCounter + 1
+  handleRotate = async (deg) => {
+    await this.setState(state => ({
+      animate: "rotate",
+      rotateDeg: deg
     }));
+
+    setTimeout(() => {
+      this.player.rotate(0, 0, deg);
+      this.setState(state => ({
+        animate: null,
+        moveCounter: state.moveCounter + 1
+      }));
+    }, 650);
   }
 
-  handleReflect = (axis) => {
-    this.player.reflect(axis);
-    this.setState(state => ({
-      moveCounter: state.moveCounter + 1
+  handleReflect = async (axis) => {
+    await this.setState(state => ({
+      animate: "reflect",
+      reflectAxis: axis
     }));
+
+    setTimeout(() => {
+      this.player.reflect(axis);
+      this.setState(state => ({
+        animate: null,
+        moveCounter: state.moveCounter + 1
+      }));
+    }, 650);
   }
 
 
@@ -97,6 +116,7 @@ class Canvas extends Component {
     if (evaluateMatch(this.player, this.goal)) {
       win = "WIN!"
     }
+    
     return (
       <>
         <svg width="1000" height="1000">
@@ -111,17 +131,25 @@ class Canvas extends Component {
           <text x="980" y="515">10</text>
 
           <TriangleShape triangleClassName={"goal"} a={this.goal.a} b={this.goal.b} c={this.goal.c} />
-          <TriangleShape triangleClassName={"player"} a={this.player.a} b={this.player.b} c={this.player.c} animate={this.state.animate} />
 
-          <Animation
-            triangleClassName={"player"}
-            a={this.player.a}
-            b={this.player.b}
-            c={this.player.c}
-            animate={this.state.animate}
-            translateX={Number(this.state.translateX)}
-            translateY={Number(this.state.translateY)}
-          />
+          {!this.state.animate ? (
+            <TriangleShape triangleClassName={"player"}
+              a={this.player.a} b={this.player.b} c={this.player.c}
+              animate={this.state.animate} />
+          ) : null}
+
+          {this.state.animate ? (
+            <Animation
+              triangleClassName={"player"}
+              a={this.player.a}
+              b={this.player.b}
+              c={this.player.c}
+              animate={this.state.animate}
+              rotateDeg={this.state.rotateDeg}
+              reflectAxis={this.state.reflectAxis}
+              translateX={Number(this.state.translateX)}
+              translateY={Number(this.state.translateY)} />
+          ) : null}
 
           <text className={win === "WIN!" ? "win" : null} x="300" y="500">{win}</text>
 
@@ -133,7 +161,7 @@ class Canvas extends Component {
           y:<input className="input" type="number" onChange={this.handleOnChange} name={"translateY"} value={this.state.translateY} />
           <button onClick={() => this.handleTranslate()}>Translate</button>
           <button onClick={() => this.handleRotate(90)}>Rotate 90° ↻ </button>
-          <button onClick={() => this.handleRotate(270)}>Rotate 90° ↻ </button>
+          <button onClick={() => this.handleRotate(-90)}>Rotate 90° ↻ </button>
           <button onClick={() => this.handleReflect("x")}>Reflect on x-axis</button>
           <button onClick={() => this.handleReflect("y")}>Reflect on y-axis</button>
           <span>Move: {this.state.moveCounter}</span>
